@@ -1,16 +1,28 @@
+// import libraries
+import {} from 'dotenv/config'
 import express from 'express'
 import logger from 'morgan'
 import bodyParser from 'body-parser'
+import cors from 'cors'
+import mongoose from 'mongoose'
 
+// import routes
 import index from './routes/index'
 import users from './routes/users'
 
+// set up db
+mongoose.connect(`${process.env.MONGO_ATLAS}`, { useMongoClient: true })
+mongoose.Promise = global.Promise
+
 const app = express()
 
+// middleware
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
+app.use(cors())
 
+// website routes
 app.use('/', index)
 app.use('/users', users)
 
@@ -32,4 +44,4 @@ app.use(function(err, req, res, next) {
   res.send('error')
 })
 
-module.exports = app
+export default app
